@@ -64,6 +64,12 @@ export class UserService {
     }, '_id socketId');
   }
 
+  async findAllById(ids: string[]){
+    return this.userModel.find({
+      _id: { $in: ids }
+    }, '_id socketId');
+  }
+
   async deleteBySocketId(id) {
     const test = await this.userModel.findOneAndDelete({
       'participant.id': id,

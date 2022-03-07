@@ -87,8 +87,8 @@ export class AppGateway
             this.server.to(user.socketId).emit('messageReceived', {
               user: { 
                 id: group.socketId,
-                displayName: group.displayName,
-                status: group.status,
+                displayName: sender.displayName,
+                status: sender.status,
                 avatar: null,
               },
               message: message,

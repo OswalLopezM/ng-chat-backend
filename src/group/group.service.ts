@@ -24,13 +24,48 @@ export class GroupService {
     }
 
     async findBySocketId(id: string) {
-        return this.groupModel
+        const group = await this.groupModel
             .findOne({
                 socketId: id,
             })
             .populate('users')
             .exec();
+
+        return group;
     }
+
+
+
+  async findBySocketIdDto(id: string) {
+      const group = await this.groupModel
+          .findOne({
+              socketId: id,
+          })
+          .populate('users')
+          .exec();
+
+        let chattingTo = group.users.map( user => {
+            return {
+            id: user.socketId,
+            displayName: user.displayName,
+            status: user.status,
+            avatar: user.avatar,
+            participantType: user.participantType,
+            chattingTo: []
+            }
+        })
+        return {
+            participant: {
+                id: group.socketId, // Assigning the socket ID as the group ID in this example
+                displayName: group.displayName,
+                status: group.status, // ng-chat groupStatus.Online,
+                avatar: null,
+                participantType: 1,
+                chattingTo: chattingTo
+            }
+        }
+              
+  }
 
     async findGroupByUserId(idUser) {
       return this.groupModel.find({
@@ -40,6 +75,36 @@ export class GroupService {
 
     async findAll() {
       return this.groupModel.find().populate('users').exec();
+    }
+
+    async findAllDto() {
+      
+      const groupCollection = await this.groupModel.find().populate('users').exec();
+
+      const groups = groupCollection.map(group => {
+          let chattingTo = group.users.map( user => {
+              return {
+              id: user.socketId,
+              displayName: user.displayName,
+              status: user.status,
+              avatar: user.avatar,
+              participantType: user.participantType,
+              chattingTo: []
+              }
+          })
+          return {
+              participant: {
+                  id: group.socketId, // Assigning the socket ID as the group ID in this example
+                  displayName: group.displayName,
+                  status: group.status, // ng-chat groupStatus.Online,
+                  avatar: null,
+                  participantType: 1,
+                  chattingTo: chattingTo
+              }
+          }
+      })
+
+      return groups;
     }
 
     async findByIdMongo(id: string) {

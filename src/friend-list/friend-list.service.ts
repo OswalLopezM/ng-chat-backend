@@ -36,8 +36,7 @@ export class FriendListService {
         if(user){
             // const groupCollection = await this.groupService.findGroupByUserId(user._id);
             const groupCollection = await this.groupService.findAll();
-        
-        
+    
         
             groups = groupCollection.map(group => {
     

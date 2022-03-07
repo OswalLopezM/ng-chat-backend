@@ -54,15 +54,21 @@ export class MessagesService {
     if(!destinatary) {
       // es un grupo
       destinatary = await this.groupService.findBySocketId(destinataryId);
+
+      if (!destinatary || !user ){
+        return []
+      }
       const messages = await this.messageModel.find({ 
         toId: destinatary._id.toString()  
       }).exec();
       // convierto los id de mongo en los mensajes a los sockets id
+      const usersInGroupIds = messages.map(m=> m.fromId);
+      const usersInGroup = await this.userService.findAllById(usersInGroupIds);
 
       return messages.map((message) => {
         return {
           type: message.type,
-          fromId: user._id.toString(),
+          fromId: usersInGroup.find((user) => user._id.toString() === message.fromId.toString()).socketId,
           toId: destinatary.socketId,
           message: message.message,
           dateSent: message.dateSent
